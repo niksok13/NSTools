@@ -1,66 +1,57 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 namespace NSTools
 {
-    public class EventManager
+    public static class EventManager
     {
-        private Dictionary<string, Action<object[]>> binds, global_binds;
+        private static Dictionary<string, Action<object>> binds, global_binds;
 
-        private static EventManager instance;
-        public static EventManager Instance
+        static EventManager()
         {
-            get{
-                if (instance == null)
-                {
-                    instance = new EventManager();
-                    SceneManager.sceneLoaded += (a,b)=> instance.binds = new Dictionary<string, Action<object[]>>();
-                }
-                return instance;
-            }
+            binds = new Dictionary<string, Action<object>>();
+            global_binds = new Dictionary<string, Action<object>>();
+            SceneManager.sceneUnloaded += s=> binds = new Dictionary<string, Action<object>>();
         }
 
-        public EventManager()
+        public  static void Bind(string name, Action<object> ev)
         {
-            binds = new Dictionary<string, Action<object[]>>();
-            global_binds = new Dictionary<string, Action<object[]>>();
-        }
-
-        public void Bind(string name, Action<object[]> ev)
-        {
-            if (binds.ContainsKey(name)) 
+            Log.Trace($"EventManager Bind {ev.Target} to {name}", ev.Target as Object);
+            if (binds.ContainsKey(name))
                 binds[name] += ev;
             else
                 binds[name] = ev;
         }
 
-        public void Unbind(string name, Action<object[]> ev)
+        public  static void Unbind(string name, Action<object> ev)
         {
             if (binds.ContainsKey(name)) binds[name] -= ev;
         }
         
-        public void BindGlobal(string name, Action<object[]> ev)
+        public static  void BindGlobal(string name, Action<object> ev)
         {
-            if (global_binds.ContainsKey(name)) 
+            Log.Trace($"EventManager BindGlobal {ev.Target} to {name}", ev.Target as Object);
+            if (global_binds.ContainsKey(name))
                 global_binds[name] += ev;
             else
                 global_binds[name] = ev;
         }
 
-        public void UnbindGlobal(string name, Action<object[]> ev)
+        public static  void UnbindGlobal(string name, Action<object> ev)
         {
             if (global_binds.ContainsKey(name)) global_binds[name] -= ev;
         }
 
-        public void Invoke(string name, params object[] args)
+        public  static void Invoke(string name, object arg=null)
         {
+            Log.Trace($"Invoke {name} - {arg}", Camera.main);
             if (binds.ContainsKey(name))
-                foreach (var action in binds[name].GetInvocationList())
-                    ((Action<object[]>)action).BeginInvoke(args,null,null);
+                binds[name].DynamicInvoke(arg);
             if (global_binds.ContainsKey(name)) 
-                foreach (var action in global_binds[name].GetInvocationList())
-                    ((Action<object[]>)action).BeginInvoke(args,null,null);
+                global_binds[name].DynamicInvoke(arg);
         }
     }
 }

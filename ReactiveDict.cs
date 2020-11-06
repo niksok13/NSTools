@@ -4,38 +4,43 @@ using System.Collections.Generic;
 namespace NSTools
 {
   
-    public class ReactiveDict
+    public static class Model
     {
-        private Dictionary<string, object> data;
-        private EventManager eventManager;
-
-        public ReactiveDict()
-        {
-            data = new Dictionary<string, object>();
-            eventManager = new EventManager();
-        }
-
-        public void Set<T>(string name, T value)
+        private static Dictionary<string, object> data = new Dictionary<string, object>();
+        
+        public static void Set<T>(string name, T value)
         {
             data[name] = value;
-            eventManager.Invoke(name, value);
+            EventManager.Invoke("model."+name, value);
         }
 
-        public T Get<T>(string name, T fallback)
+        public static T Get<T>(string name, T fallback)
         {
             if (data.ContainsKey(name))
                 return (T)data[name];
             return fallback;
         }
 
-        public void Bind(string name, Action<object[]> callback)
+        public static void Bind(string name, Action<object> callback)
         {
-            eventManager.Bind(name, callback);
+            EventManager.Bind("model."+name, callback);
+            callback.Invoke(null);
         }
 
-        public void Unbind(string name, Action<object[]> callback)
+        public static void BindGlobal(string name, Action<object> callback)
         {
-            eventManager.Unbind(name, callback);
+            EventManager.BindGlobal("model."+name, callback);
+            callback.Invoke(null);
+        }
+
+        public static void Unbind(string name, Action<object> callback)
+        {
+            EventManager.Unbind("model."+name, callback);
+        }
+
+        public static void UnbindGlobal(string name, Action<object> callback)
+        {
+            EventManager.UnbindGlobal("model."+name, callback);
         }
     }
 }
