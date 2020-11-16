@@ -8,11 +8,7 @@ namespace NSTools
 {
     public static class Log
     {
-        public static T GetRandomItem<T>(this ICollection<T> list)
-        {
-            var index = Random.Range(0, list.Count);
-            return list.ElementAtOrDefault(index);
-        }
+    
         public static string Format(this string str, params object[] args) => string.Format(str, args);
         enum LogLevel
         {
