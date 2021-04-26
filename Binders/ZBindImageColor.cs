@@ -3,9 +3,11 @@ using UnityEngine.UI;
 
 namespace NSTools.Binders
 {
-    public class ZBindSprite : ZBindAbstract
+
+    [RequireComponent(typeof(Image))]
+    public class ZBindImageColor : ZBindAbstract
     {
-        public Sprite defaultValue;
+        public Color defaultValue;
         private Image img;
 
         void Awake()
@@ -17,7 +19,8 @@ namespace NSTools.Binders
         {
             var value = Game.Data.Get(key, defaultValue);
             Log.Trace($"{this}: {key} = {value}", gameObject);
-            img.sprite = value;
+            img.color = value;
         }
+
     }
 }

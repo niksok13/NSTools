@@ -1,23 +1,23 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 
 namespace NSTools.Binders
 {
-    public class ZBindSprite : ZBindAbstract
+    public class ZBindSpriteColor : ZBindAbstract
     {
-        public Sprite defaultValue;
-        private Image img;
+        public Color defaultValue;
+        private SpriteRenderer img;
 
         void Awake()
         {
-            img = GetComponent<Image>();
+            img = GetComponent<SpriteRenderer>();
         }
 
         protected override void SetValue(object obj)
         {
             var value = Game.Data.Get(key, defaultValue);
             Log.Trace($"{this}: {key} = {value}", gameObject);
-            img.sprite = value;
+            img.color = value;
         }
+
     }
 }

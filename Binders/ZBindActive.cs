@@ -1,16 +1,15 @@
-﻿using NSTools;
-using UnityEngine;
-
-public class ZBindActive : ZModelBind
+﻿namespace NSTools.Binders
 {
-    public bool defaultValue;
-    public bool invert;
-
-    protected override void SetValue(object obj)
+    public class ZBindActive : ZBindAbstract
     {
-        var value = Model.Get(key, defaultValue);
-        Log.Trace($"{this}: {key} = {value}",gameObject);
-        gameObject.SetActive(value!=invert);
-    }
+        public bool defaultValue;
+        public bool invert;
 
+        protected override void SetValue(object obj)
+        {
+            var value = Game.Data.Get(key, defaultValue);
+            Log.Trace($"{this}: {key} = {value}", gameObject);
+            gameObject.SetActive(value != invert);
+        }
+    }
 }
