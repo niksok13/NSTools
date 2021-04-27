@@ -78,10 +78,13 @@ namespace NSTools
         /// <typeparam name="T">Event argument type</typeparam>
         public void Invoke<T>(string name, T arg)
         {
-            if (binds.ContainsKey(name))
-                binds[name].DynamicInvoke(arg);
-            if (global_binds.ContainsKey(name)) 
-                global_binds[name].DynamicInvoke(arg);
+            if (binds.TryGetValue(name, out var del))
+                if (del is Action<T> typedel)
+                    typedel.Invoke(arg);
+            
+            if (global_binds.TryGetValue(name, out var delg))
+                if (delg is Action<T> typedel)
+                    typedel.Invoke(arg);
         }
     }
 }

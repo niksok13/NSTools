@@ -51,14 +51,14 @@ namespace NSTools
         /// <typeparam name="T">Signal type</typeparam>
         public void Signal<T>(T signal)
         {
-            Log.Info($"FSM.Signal - {signal}");
+            Log.Debug($"FSM.Signal - {signal}");
             if (currentState is ISignalHandler<T> handler)
             {
                 var nextState = handler.Signal(signal);
                 Go(nextState);
                 return;
             }
-            Log.Error($"State {currentState} has no handler for {signal}");
+            Log.Info($"State {currentState} has no handler for {signal}");
         }
     }
 }
