@@ -76,15 +76,19 @@ namespace NSTools
         /// <param name="name">Event name</param>
         /// <param name="arg">Invocation argument</param>
         /// <typeparam name="T">Event argument type</typeparam>
-        public void Invoke<T>(string name, T arg)
+         public void Invoke<T>(string name, T arg)
         {
             if (binds.TryGetValue(name, out var del))
                 if (del is Action<T> typedel)
                     typedel.Invoke(arg);
-            
+                else
+                    Log.Fatal($"type mismatch! {name} is {del}, expected {typeof(T)}");
+
             if (global_binds.TryGetValue(name, out var delg))
                 if (delg is Action<T> typedel)
                     typedel.Invoke(arg);
+                else
+                    Log.Fatal($"type mismatch! {name} is {delg}, expected {typeof(T)}");
         }
     }
 }
